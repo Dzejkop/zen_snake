@@ -14,8 +14,6 @@ onready var _out_box := $out_box
 
 var wall_elements: Array
 
-var bounds_diagonal: Vector3
-
 static func count_zeros(v: Vector3) -> int:
     var count = 0
     if v.x == 0:

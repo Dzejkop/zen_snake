@@ -5,6 +5,8 @@ onready var body: Spatial = $body
 onready var Segment := preload("res://prefabs/segment.tscn")
 onready var root := $".."
 
+signal on_eat_food()
+
 export var t: float = 2.0
 var _t: float = t
 var tail: Array = []
@@ -52,6 +54,7 @@ func jump():
 
 func eat(food_node: Spatial):
     get_tree().queue_delete(food_node)
+    emit_signal("on_eat_food")
     grow()
 
 func grow():
@@ -86,5 +89,6 @@ func move_forward():
         var new_segment := Segment.instance()
         body.add_child(new_segment)
         new_segment.translation = last_pos
+        new_segment.update_pos(last_pos)
         tail.append(new_segment)
 

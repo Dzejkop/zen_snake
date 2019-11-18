@@ -8,14 +8,9 @@
 
 config_version=4
 
-_global_script_classes=[ {
-"base": "Spatial",
-"class": "World",
-"language": "NativeScript",
-"path": "res://scripts/world.gdns"
-} ]
+_global_script_classes=[  ]
 _global_script_class_icons={
-"World": ""
+
 }
 
 [application]
@@ -34,7 +29,7 @@ window/size/height=900
 
 [editor_plugins]
 
-enabled=PoolStringArray( "gut" )
+enabled=PoolStringArray(  )
 
 [gdnative]
 

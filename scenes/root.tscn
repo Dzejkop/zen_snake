@@ -4,8 +4,8 @@
 [ext_resource path="res://scripts/world.gd" type="Script" id=2]
 [ext_resource path="res://env.tres" type="Environment" id=3]
 [ext_resource path="res://scripts/camera_anchor.gd" type="Script" id=4]
+[ext_resource path="res://scripts/env.gd" type="Script" id=5]
 [ext_resource path="res://scripts/camera.gd" type="Script" id=6]
-[ext_resource path="res://meshes/wall_lattice.tscn" type="PackedScene" id=7]
 [ext_resource path="res://scripts/food_spawner.gd" type="Script" id=8]
 [ext_resource path="res://materials/distance_2.tres" type="Material" id=9]
 
@@ -38,8 +38,11 @@ shadow_enabled = true
 
 [node name="env" type="WorldEnvironment" parent="."]
 environment = ExtResource( 3 )
+script = ExtResource( 5 )
+min_glow_intensity = 0.8
 
 [node name="snake" parent="." instance=ExtResource( 1 )]
+t = 0.5
 
 [node name="out_box" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0 )
@@ -47,67 +50,10 @@ cast_shadow = 0
 mesh = SubResource( 1 )
 material/0 = ExtResource( 9 )
 
-[node name="lattice" type="Spatial" parent="."]
-visible = false
-
-[node name="wall_lattice" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0 )
-
-[node name="wall_lattice2" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12 )
-
-[node name="wall_lattice3" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12 )
-
-[node name="wall_lattice4" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 0 )
-
-[node name="wall_lattice5" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 0 )
-
-[node name="wall_lattice6" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 12 )
-
-[node name="wall_lattice7" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -12 )
-
-[node name="wall_lattice8" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, -12 )
-
-[node name="wall_lattice9" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 12 )
-
-[node name="wall_lattice18" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 22, 0 )
-
-[node name="wall_lattice17" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, 12 )
-
-[node name="wall_lattice16" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, -12 )
-
-[node name="wall_lattice15" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 20, 0 )
-
-[node name="wall_lattice14" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 20, 0 )
-
-[node name="wall_lattice13" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 20, 12 )
-
-[node name="wall_lattice12" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 20, -12 )
-
-[node name="wall_lattice11" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 20, -12 )
-
-[node name="wall_lattice10" parent="lattice" instance=ExtResource( 7 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 20, 12 )
-
 [node name="food_spawner" type="Node" parent="."]
 script = ExtResource( 8 )
 
-[node name="MeshInstance" type="MeshInstance" parent="."]
+[node name="tower" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -54, 0 )
 mesh = SubResource( 3 )
 material/0 = null
@@ -125,3 +71,4 @@ size = 60.0
 far = 1000.0
 script = ExtResource( 6 )
 target = NodePath("../snake/head")
+[connection signal="on_eat_food" from="snake" to="env" method="glow_kick"]

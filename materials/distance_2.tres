@@ -7,5 +7,5 @@ shader = ExtResource( 1 )
 shader_param/highlight_color = Color( 1, 1, 1, 1 )
 shader_param/snake_head_pos = Vector3( 0, 0, 0 )
 shader_param/range = 10.0
-shader_param/highlight_cutoff = 10.0
-shader_param/opacity = 0.2
+shader_param/highlight_cutoff = 50.0
+shader_param/opacity = 0.4
