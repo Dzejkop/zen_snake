@@ -1,0 +1,236 @@
+[gd_resource type="VisualShader" load_steps=22 format=2]
+
+[sub_resource type="VisualShaderNodeInput" id=1]
+input_name = "vertex"
+
+[sub_resource type="VisualShaderNodeVec3Uniform" id=2]
+uniform_name = "snake_head_pos"
+
+[sub_resource type="VisualShaderNodeTransformVecMult" id=3]
+
+[sub_resource type="VisualShaderNodeInput" id=4]
+input_name = "camera"
+
+[sub_resource type="VisualShaderNodeVectorDistance" id=5]
+
+[sub_resource type="VisualShaderNodeScalarClamp" id=6]
+
+[sub_resource type="VisualShaderNodeScalarOp" id=7]
+default_input_values = [ 0, 0.0, 1, 20.0 ]
+operator = 3
+
+[sub_resource type="VisualShaderNodeScalarOp" id=8]
+default_input_values = [ 0, 0.0, 1, 10.0 ]
+operator = 5
+
+[sub_resource type="VisualShaderNodeScalarFunc" id=9]
+output_port_for_preview = 0
+function = 31
+
+[sub_resource type="VisualShaderNodeScalarOp" id=10]
+default_input_values = [ 0, 0.0, 1, 0.4 ]
+operator = 2
+
+[sub_resource type="VisualShaderNodeColorUniform" id=11]
+uniform_name = "highlight_color"
+
+[sub_resource type="VisualShaderNodeScalarUniform" id=12]
+uniform_name = "range"
+
+[sub_resource type="VisualShaderNodeScalarUniform" id=13]
+uniform_name = "highlight_cutoff"
+
+[sub_resource type="VisualShaderNodeFresnel" id=14]
+default_input_values = [ 0, Vector3( 0, 0, 0 ), 1, Vector3( 0, 0, 0 ), 2, false, 3, 2.5 ]
+
+[sub_resource type="VisualShaderNodeInput" id=15]
+input_name = "normal"
+
+[sub_resource type="VisualShaderNodeInput" id=16]
+input_name = "view"
+
+[sub_resource type="VisualShaderNodeScalarOp" id=17]
+
+[sub_resource type="VisualShaderNodeScalarOp" id=18]
+default_input_values = [ 0, 0.0, 1, 3.0 ]
+operator = 2
+
+[sub_resource type="VisualShaderNodeScalarOp" id=19]
+default_input_values = [ 0, 0.0, 1, 6.0 ]
+operator = 5
+
+[sub_resource type="VisualShaderNodeScalarClamp" id=20]
+
+[sub_resource type="VisualShaderNodeScalarUniform" id=21]
+uniform_name = "opacity"
+
+[resource]
+code = "shader_type spatial;
+render_mode cull_disabled, unshaded, world_vertex_coords;
+
+uniform vec4 highlight_color : hint_color;
+uniform vec3 snake_head_pos;
+uniform float range;
+uniform float highlight_cutoff;
+uniform float opacity;
+
+
+
+void vertex() {
+// Output:0
+
+}
+
+void fragment() {
+// ColorUniform:51
+	vec3 n_out51p0;
+	float n_out51p1;
+	n_out51p0 = highlight_color.rgb;
+	n_out51p1 = highlight_color.a;
+
+// Input:71
+	vec3 n_out71p0;
+	n_out71p0 = NORMAL;
+
+// Input:72
+	vec3 n_out72p0;
+	n_out72p0 = VIEW;
+
+// Fresnel:70
+	bool n_in70p2 = false;
+	float n_in70p3 = 2.50000;
+	float n_out70p0;
+	n_out70p0 = n_in70p2 ? (pow(clamp(dot(n_out71p0, n_out72p0), 0.0, 1.0), n_in70p3)) : (pow(1.0 - clamp(dot(n_out71p0, n_out72p0), 0.0, 1.0), n_in70p3));
+// ScalarOp:74
+	float n_in74p1 = 3.00000;
+	float n_out74p0;
+	n_out74p0 = n_out70p0 * n_in74p1;
+
+// ScalarOp:75
+	float n_in75p1 = 6.00000;
+	float n_out75p0;
+	n_out75p0 = pow( n_out74p0 , n_in75p1 );
+
+// ScalarClamp:76
+	float n_in76p1 = 0.00000;
+	float n_in76p2 = 1.00000;
+	float n_out76p0;
+	n_out76p0 = clamp( n_out75p0, n_in76p1, n_in76p2 );
+
+// Input:25
+	mat4 n_out25p0;
+	n_out25p0 = CAMERA_MATRIX;
+
+// Input:20
+	vec3 n_out20p0;
+	n_out20p0 = VERTEX;
+
+// TransformVectorMult:24
+	vec3 n_out24p0;
+	n_out24p0 = ( n_out25p0 * vec4(n_out20p0, 1.0) ).xyz;
+
+// VectorUniform:22
+	vec3 n_out22p0;
+	n_out22p0 = snake_head_pos;
+
+// Distance:26
+	float n_out26p0;
+	n_out26p0 = distance( n_out24p0 , n_out22p0 );
+
+// ScalarUniform:52
+	float n_out52p0;
+	n_out52p0 = range;
+
+// ScalarOp:28
+	float n_out28p0;
+	n_out28p0 = n_out26p0 / n_out52p0;
+
+// ScalarUniform:53
+	float n_out53p0;
+	n_out53p0 = highlight_cutoff;
+
+// ScalarOp:29
+	float n_out29p0;
+	n_out29p0 = pow( n_out28p0 , n_out53p0 );
+
+// ScalarFunc:30
+	float n_out30p0;
+	n_out30p0 = 1.0-n_out29p0;
+
+// ScalarClamp:27
+	float n_in27p1 = 0.00000;
+	float n_in27p2 = 1.00000;
+	float n_out27p0;
+	n_out27p0 = clamp( n_out30p0, n_in27p1, n_in27p2 );
+
+// ScalarOp:73
+	float n_out73p0;
+	n_out73p0 = n_out76p0 + n_out27p0;
+
+// ScalarUniform:77
+	float n_out77p0;
+	n_out77p0 = opacity;
+
+// ScalarOp:31
+	float n_out31p0;
+	n_out31p0 = n_out73p0 * n_out77p0;
+
+// Output:0
+	ALBEDO = n_out51p0;
+	ALPHA = n_out31p0;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+graph_offset = Vector2( 1026, -745.75 )
+modes/cull = 2
+flags/unshaded = true
+flags/world_vertex_coords = true
+nodes/fragment/0/position = Vector2( 1880, -580 )
+nodes/fragment/20/node = SubResource( 1 )
+nodes/fragment/20/position = Vector2( -80, -180 )
+nodes/fragment/22/node = SubResource( 2 )
+nodes/fragment/22/position = Vector2( -80, -40 )
+nodes/fragment/24/node = SubResource( 3 )
+nodes/fragment/24/position = Vector2( 100, -260 )
+nodes/fragment/25/node = SubResource( 4 )
+nodes/fragment/25/position = Vector2( -80, -260 )
+nodes/fragment/26/node = SubResource( 5 )
+nodes/fragment/26/position = Vector2( 340, -180 )
+nodes/fragment/27/node = SubResource( 6 )
+nodes/fragment/27/position = Vector2( 1120, -220 )
+nodes/fragment/28/node = SubResource( 7 )
+nodes/fragment/28/position = Vector2( 500, -240 )
+nodes/fragment/29/node = SubResource( 8 )
+nodes/fragment/29/position = Vector2( 720, -240 )
+nodes/fragment/30/node = SubResource( 9 )
+nodes/fragment/30/position = Vector2( 900, -220 )
+nodes/fragment/31/node = SubResource( 10 )
+nodes/fragment/31/position = Vector2( 1520, -320 )
+nodes/fragment/51/node = SubResource( 11 )
+nodes/fragment/51/position = Vector2( 1540, -480 )
+nodes/fragment/52/node = SubResource( 12 )
+nodes/fragment/52/position = Vector2( 280, -60 )
+nodes/fragment/53/node = SubResource( 13 )
+nodes/fragment/53/position = Vector2( 520, -60 )
+nodes/fragment/70/node = SubResource( 14 )
+nodes/fragment/70/position = Vector2( 320, -500 )
+nodes/fragment/71/node = SubResource( 15 )
+nodes/fragment/71/position = Vector2( 100, -500 )
+nodes/fragment/72/node = SubResource( 16 )
+nodes/fragment/72/position = Vector2( 100, -420 )
+nodes/fragment/73/node = SubResource( 17 )
+nodes/fragment/73/position = Vector2( 1320, -340 )
+nodes/fragment/74/node = SubResource( 18 )
+nodes/fragment/74/position = Vector2( 540, -500 )
+nodes/fragment/75/node = SubResource( 19 )
+nodes/fragment/75/position = Vector2( 776.728, -416.516 )
+nodes/fragment/76/node = SubResource( 20 )
+nodes/fragment/76/position = Vector2( 1020, -360 )
+nodes/fragment/77/node = SubResource( 21 )
+nodes/fragment/77/position = Vector2( 1240, -60 )
+nodes/fragment/connections = PoolIntArray( 20, 0, 24, 1, 25, 0, 24, 0, 24, 0, 26, 0, 22, 0, 26, 1, 26, 0, 28, 0, 28, 0, 29, 0, 29, 0, 30, 0, 52, 0, 28, 1, 53, 0, 29, 1, 71, 0, 70, 0, 72, 0, 70, 1, 30, 0, 27, 0, 27, 0, 73, 1, 73, 0, 31, 0, 70, 0, 74, 0, 74, 0, 75, 0, 75, 0, 76, 0, 76, 0, 73, 0, 77, 0, 31, 1, 51, 0, 0, 0, 31, 0, 0, 1 )

@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://env.tres" type="Environment" id=2]
+[ext_resource path="res://scripts/wall.gd" type="Script" id=3]
+
+[node name="Spatial" type="Spatial"]
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 0.959688, -0.103532, 0.261306, 0, 0.929687, 0.368352, -0.281069, -0.353503, 0.892209, 2.93828, 4.31401, 9.94552 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 2 )
+
+[node name="wall" type="Spatial" parent="."]
+script = ExtResource( 3 )
+width = 4
+height = 4

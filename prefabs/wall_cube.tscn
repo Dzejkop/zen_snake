@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://scripts/wall_cube.gd" type="Script" id=1]
+
+[sub_resource type="CubeMesh" id=1]
+
+[sub_resource type="SpatialMaterial" id=2]
+resource_local_to_scene = true
+emission_enabled = true
+emission = Color( 0, 0, 0, 1 )
+emission_energy = 1.0
+emission_operator = 0
+emission_on_uv2 = false
+
+[node name="wall_cube" type="MeshInstance"]
+mesh = SubResource( 1 )
+material/0 = SubResource( 2 )
+script = ExtResource( 1 )
+color_active = Color( 0.878431, 0.243137, 0.243137, 1 )
+color_semiactive = Color( 0.898039, 0.898039, 0.317647, 1 )
+energy_active = 5.0
+energy_inactive = 0.0
