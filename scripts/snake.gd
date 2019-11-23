@@ -5,7 +5,8 @@ onready var body: Spatial = $body
 onready var Segment := preload("res://prefabs/segment.tscn")
 onready var root := $".."
 
-signal on_eat_food()
+signal on_eat_food(food)
+signal on_death()
 
 export var t: float = 2.0
 var _t: float = t
@@ -13,6 +14,7 @@ var tail: Array = []
 
 var grow_counter := 0
 var is_in_air := false
+var is_alive := true
 
 var direction := Vector3.FORWARD
 var current_up := Vector3.UP
@@ -24,8 +26,14 @@ func _ready() -> void:
 
 
 func _process(delta) -> void:
-    _t -= delta
+    if is_in_air:
+        _t -= delta * 3
+    else:
+        _t -= delta
 
+    if not is_alive:
+        return
+        
     if not is_in_air and Input.is_action_just_pressed('ui_left'):
         direction = direction.cross(-current_up)
 
@@ -35,7 +43,8 @@ func _process(delta) -> void:
     if not is_in_air and Input.is_action_just_pressed("ui_accept"):
         jump()
 
-    head.look_at(head.translation + direction, current_up)
+    head.transform = head.transform.looking_at(head.translation + direction, current_up)
+    $indicator.translation = root.clamp(root.flip(head.translation, current_up))
 
     if _t <= 0:
         move_forward()
@@ -43,7 +52,6 @@ func _process(delta) -> void:
 
     for food_node in get_tree().get_nodes_in_group('food'):
         if food_node is Spatial && food_node.translation == head._target_pos:
-            print('om nom')
             eat(food_node)
 
 func jump():
@@ -54,14 +62,28 @@ func jump():
 
 func eat(food_node: Spatial):
     get_tree().queue_delete(food_node)
-    emit_signal("on_eat_food")
+    emit_signal("on_eat_food", food_node)
     grow()
+    
+func die():
+    emit_signal("on_death")
+    is_alive = false
+    $indicator.visible = false
+    
+    head.die()
+    for segment in tail:
+        segment.die()
 
 func grow():
-    grow_counter += 1
+    grow_counter += 5
 
-func is_touching_wall():
-    pass
+func is_touching_self():
+    var head_pos = head._target_pos
+    for segment in tail:
+        var segment_pos = segment._target_pos
+        if head_pos.distance_to(segment_pos) < 1:
+            return true
+    return false
 
 func move_forward():
     var last_pos = head._target_pos
@@ -75,6 +97,9 @@ func move_forward():
         
 #    head.global_translate(direction * 2)
     head.translate_pos(direction * 2)
+    
+    if is_touching_self():
+        die()
 
     for segment in tail:
         var tmp = segment.translation
@@ -84,7 +109,6 @@ func move_forward():
         last_pos = tmp
 
     if grow_counter > 0:
-        print('growing...')
         grow_counter -= 1
         var new_segment := Segment.instance()
         body.add_child(new_segment)

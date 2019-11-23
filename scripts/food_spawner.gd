@@ -4,16 +4,23 @@ onready var food_prefab := preload("res://prefabs/food.tscn")
 
 export var max_food_count = 4
 
-var t = 2
+var _is_spawning := true
+
+export var t := 5.0
+var _t = 0
 
 onready var world := $".."
 
+var _foods = []
+
+func on_food_eaten(food_node):
+    _foods.erase(food_node)
 
 func _process(delta):
-    t -= delta
+    _t -= delta
     
-    if t <= 0:
-        t = 2
+    if _is_spawning && _t <= 0:
+        _t = t
         spawn_food()
 
 func random_wall_position():
@@ -34,9 +41,38 @@ func random_wall_position():
         rand_z = 0
     
     return aa + Vector3(rand_x, rand_y, rand_z)
+    
+func only_largest(v: Vector3) -> Vector3:
+    if abs(v.x) >= abs(v.y) && abs(v.x) >= abs(v.z):
+        return Vector3(v.x, 0, 0)
+    elif abs(v.y) >= abs(v.x) && abs(v.y) >= abs(v.z):
+        return Vector3(0, v.y, 0)
+    else:
+        return Vector3(0, 0, v.z)
 
 func spawn_food():
+    if len(_foods) >= max_food_count:
+        return
+        
     var new_food = food_prefab.instance()
-    new_food.translation = random_wall_position()
-    get_tree().root.add_child(new_food)
-#    food_prefab
+    var pos = random_wall_position()
+
+    var v = world.origin() - pos
+
+    var normal = only_largest(world.origin() - pos)
+
+    normal = normal.normalized()
+    var nearest_corner = world.nearest_corner(pos)
+    var to_corner = nearest_corner - pos
+
+    get_parent().add_child(new_food)
+    new_food.translation = pos
+    new_food.transform = new_food.transform.looking_at(pos + to_corner, normal)
+    _foods.append(new_food)
+#    
+
+func disable():
+    _is_spawning = false
+    for f in _foods:
+        f.queue_free()
+    _foods.clear()
