@@ -24,6 +24,8 @@ func _ready() -> void:
     for child in body.get_children():
         tail.append(child)
 
+func get_pos() -> Vector3:
+    return head.translation
 
 func _process(delta) -> void:
     if is_in_air:
@@ -111,7 +113,7 @@ func move_forward():
     if grow_counter > 0:
         grow_counter -= 1
         var new_segment := Segment.instance()
-        body.add_child(new_segment)
+        add_child(new_segment)
         new_segment.translation = last_pos
         new_segment.update_pos(last_pos)
         tail.append(new_segment)
