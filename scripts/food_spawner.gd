@@ -17,6 +17,8 @@ func on_food_eaten(food_node):
     _foods.erase(food_node)
 
 func _process(delta):
+    if not world.is_game_in_progress():
+        return
     _t -= delta
     
     if _is_spawning && _t <= 0:
@@ -56,6 +58,9 @@ func spawn_food():
         
     var new_food = food_prefab.instance()
     var pos = random_wall_position()
+    
+    while $"../snake".intersects(pos):
+        pos = random_wall_position()
 
     var v = world.origin() - pos
 

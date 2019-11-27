@@ -8,6 +8,8 @@ onready var root := $".."
 signal on_eat_food(food)
 signal on_death()
 
+const INTERSECT_THRESHOLD := 0.5
+
 export var t: float = 2.0
 var _t: float = t
 var tail: Array = []
@@ -15,6 +17,7 @@ var tail: Array = []
 var grow_counter := 0
 var is_in_air := false
 var is_alive := true
+var _game_started := false
 
 var direction := Vector3.FORWARD
 var current_up := Vector3.UP
@@ -26,8 +29,20 @@ func _ready() -> void:
 
 func get_pos() -> Vector3:
     return head.translation
+    
+func intersects(v: Vector3) -> bool:
+    if v.distance_to(head.translation) < INTERSECT_THRESHOLD:
+        return true
+    
+    for s in tail:
+        if v.distance_to(s.translation) < INTERSECT_THRESHOLD:
+            return true
+    
+    return false
 
 func _process(delta) -> void:
+    if not root.has_game_started():
+        return
     if is_in_air:
         _t -= delta * 3
     else:

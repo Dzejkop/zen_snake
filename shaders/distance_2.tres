@@ -45,7 +45,7 @@ uniform_name = "range"
 uniform_name = "highlight_cutoff"
 
 [sub_resource type="VisualShaderNodeFresnel" id=15]
-default_input_values = [ 0, Vector3( 0, 0, 0 ), 1, Vector3( 0, 0, 0 ), 2, false, 3, 2.5 ]
+default_input_values = [ 0, Vector3( 0, 0, 0 ), 1, Vector3( 0, 0, 0 ), 2, false, 3, 5.0 ]
 
 [sub_resource type="VisualShaderNodeInput" id=16]
 input_name = "normal"
@@ -92,7 +92,7 @@ void fragment() {
 
 // Fresnel:70
 	bool n_in70p2 = false;
-	float n_in70p3 = 2.50000;
+	float n_in70p3 = 5.00000;
 	float n_out70p0;
 	n_out70p0 = n_in70p2 ? (pow(clamp(dot(n_out71p0, n_out72p0), 0.0, 1.0), n_in70p3)) : (pow(1.0 - clamp(dot(n_out71p0, n_out72p0), 0.0, 1.0), n_in70p3));
 // Scalar:103
@@ -168,6 +168,7 @@ void fragment() {
 // Output:0
 	ALBEDO = n_out51p0;
 	ALPHA = n_out101p0;
+	EMISSION = n_out51p0;
 
 }
 
@@ -176,11 +177,11 @@ void light() {
 
 }
 "
-graph_offset = Vector2( 461, -702 )
+graph_offset = Vector2( 45.2239, -693 )
 modes/cull = 2
 flags/unshaded = true
 flags/world_vertex_coords = true
-nodes/fragment/0/position = Vector2( 1920, -580 )
+nodes/fragment/0/position = Vector2( 2320, -580 )
 nodes/fragment/20/node = SubResource( 6 )
 nodes/fragment/20/position = Vector2( -80, -180 )
 nodes/fragment/22/node = SubResource( 7 )
@@ -231,4 +232,4 @@ nodes/fragment/105/output_ports = "0,0,out;"
 nodes/fragment/105/expression = "float tmp = val / range;
 tmp = pow(tmp, highlight_cutoff);
 out = clamp(1.0 - tmp, 0, 1);"
-nodes/fragment/connections = PoolIntArray( 20, 0, 24, 1, 25, 0, 24, 0, 24, 0, 26, 0, 22, 0, 26, 1, 72, 0, 70, 1, 73, 0, 31, 0, 77, 0, 31, 1, 31, 0, 101, 0, 101, 0, 0, 1, 51, 0, 0, 0, 70, 0, 102, 0, 103, 0, 102, 1, 104, 0, 102, 2, 102, 0, 73, 0, 71, 0, 70, 0, 52, 0, 105, 0, 53, 0, 105, 1, 26, 0, 105, 2, 105, 0, 73, 1 )
+nodes/fragment/connections = PoolIntArray( 20, 0, 24, 1, 25, 0, 24, 0, 24, 0, 26, 0, 22, 0, 26, 1, 72, 0, 70, 1, 73, 0, 31, 0, 77, 0, 31, 1, 31, 0, 101, 0, 101, 0, 0, 1, 70, 0, 102, 0, 103, 0, 102, 1, 104, 0, 102, 2, 102, 0, 73, 0, 71, 0, 70, 0, 52, 0, 105, 0, 53, 0, 105, 1, 26, 0, 105, 2, 105, 0, 73, 1, 51, 0, 0, 0, 51, 0, 0, 5 )

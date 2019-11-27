@@ -15,8 +15,10 @@ _global_script_class_icons={
 
 [application]
 
-config/name="godot_shader_fun"
+config/name="hyper_snake"
 run/main_scene="res://scenes/root.tscn"
+run/disable_stdout=true
+run/disable_stderr=true
 
 [debug]
 
@@ -51,6 +53,13 @@ camera_right={
 [rendering]
 
 quality/filters/anisotropic_filter_level=1
+quality/shadow_atlas/size=256
+quality/shadow_atlas/size.mobile=256
+quality/shadows/filter_mode=0
 quality/reflections/texture_array_reflections=false
 quality/reflections/high_quality_ggx=false
+quality/shading/force_vertex_shading.mobile=false
+quality/shading/force_lambert_over_burley.mobile=false
+quality/shading/force_blinn_over_ggx.mobile=false
+quality/filters/use_nearest_mipmap_filter=true
 quality/filters/msaa=3

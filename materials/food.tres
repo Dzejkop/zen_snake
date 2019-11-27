@@ -3,7 +3,7 @@
 [resource]
 metallic_specular = 1.0
 emission_enabled = true
-emission = Color( 1, 0.27, 0.27, 1 )
+emission = Color( 1, 0.678431, 0, 1 )
 emission_energy = 5.0
 emission_operator = 0
 emission_on_uv2 = false

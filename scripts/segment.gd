@@ -27,10 +27,11 @@ func _process(_delta):
     translation = translation.linear_interpolate(_target_pos, 0.5)
 
     if is_dead:
-        var mat: ShaderMaterial = $mesh.get_surface_material(0)
-        var ratio = mat.get_shader_param("ratio")
-        if ratio:
-            mat.set_shader_param("ratio", lerp(ratio, 0, 0.01))
+        pass
+#        var mat: ShaderMaterial = $mesh.get_surface_material(0)
+#        var ratio = mat.get_shader_param("ratio")
+#        if ratio:
+#            mat.set_shader_param("ratio", lerp(ratio, 0, 0.01))
 
 func die():
     is_dead = true

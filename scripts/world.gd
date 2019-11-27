@@ -14,6 +14,14 @@ signal on_quit()
 
 var wall_elements: Array
 
+var _game_in_progress := false
+
+func has_game_started() -> bool:
+    return _game_in_progress
+    
+func is_game_in_progress() -> bool:
+    return _game_in_progress
+
 func vec_x(v: Vector3) -> Vector3:
     return Vector3(v.x, 0, 0)
 
@@ -105,6 +113,11 @@ func _ready():
     wall_elements = get_tree().get_nodes_in_group('wall')
 
 func _process(_delta):
+    if not has_game_started() && (Input.is_action_just_pressed("ui_left") || Input.is_action_just_pressed("ui_right")):
+        _game_in_progress = true
+        $text_control.set_to_update_score()
+        $env.glow_kick(10.0)
+        
     if Input.is_action_just_pressed("ui_cancel"):
         $food_spawner.disable()
         emit_signal("on_quit")
@@ -124,7 +137,10 @@ func _process(_delta):
 
 
 func _on_game_over():
-    $snake_pos_indicators.visible = false
+    if $snake_pos_indicators:
+        $snake_pos_indicators.visible = false
     $particles.speed_scale = 0
     $out_box.get_surface_material(0).set_shader_param("range", 0)
     $food_spawner.disable()
+    $text_control.set_shift_text(["Press", "Escape", "To", "Restart"])
+    $env.glow_kick(100)

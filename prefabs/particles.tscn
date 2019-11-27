@@ -1,0 +1,130 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://scripts/particles.gd" type="Script" id=1]
+
+[sub_resource type="VisualShaderNodeFresnel" id=4]
+default_input_values = [ 0, Vector3( 0, 0, 0 ), 1, Vector3( 0, 0, 0 ), 2, true, 3, 10.0 ]
+
+[sub_resource type="VisualShaderNodeInput" id=5]
+input_name = "normal"
+
+[sub_resource type="VisualShaderNodeInput" id=6]
+input_name = "view"
+
+[sub_resource type="VisualShaderNodeScalarOp" id=7]
+default_input_values = [ 0, 0.0, 1, 4.0 ]
+operator = 2
+
+[sub_resource type="VisualShaderNodeColorConstant" id=8]
+constant = Color( 0.980392, 0.968627, 0.596078, 1 )
+
+[sub_resource type="VisualShaderNodeVectorOp" id=9]
+operator = 2
+
+[sub_resource type="VisualShader" id=10]
+code = "shader_type spatial;
+render_mode unshaded, shadows_disabled;
+
+
+
+
+void vertex() {
+// Output:0
+
+}
+
+void fragment() {
+// Color:6
+	vec3 n_out6p0;
+	float n_out6p1;
+	n_out6p0 = vec3(0.980392,0.968627,0.596078);
+	n_out6p1 = 1.000000;
+
+// Input:3
+	vec3 n_out3p0;
+	n_out3p0 = NORMAL;
+
+// Input:4
+	vec3 n_out4p0;
+	n_out4p0 = VIEW;
+
+// Fresnel:2
+	bool n_in2p2 = true;
+	float n_in2p3 = 10.00000;
+	float n_out2p0;
+	n_out2p0 = n_in2p2 ? (pow(clamp(dot(n_out3p0, n_out4p0), 0.0, 1.0), n_in2p3)) : (pow(1.0 - clamp(dot(n_out3p0, n_out4p0), 0.0, 1.0), n_in2p3));
+// ScalarOp:5
+	float n_in5p1 = 4.00000;
+	float n_out5p0;
+	n_out5p0 = n_out2p0 * n_in5p1;
+
+// VectorOp:7
+	vec3 n_out7p0;
+	n_out7p0 = n_out6p0 * vec3(n_out5p0);
+
+// Output:0
+	ALBEDO = n_out7p0;
+	ALPHA = n_out5p0;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+graph_offset = Vector2( -588, -188 )
+flags/shadows_disabled = true
+flags/unshaded = true
+nodes/fragment/0/position = Vector2( 480, -60 )
+nodes/fragment/2/node = SubResource( 4 )
+nodes/fragment/2/position = Vector2( -260, 0 )
+nodes/fragment/3/node = SubResource( 5 )
+nodes/fragment/3/position = Vector2( -480, 0 )
+nodes/fragment/4/node = SubResource( 6 )
+nodes/fragment/4/position = Vector2( -580, 80 )
+nodes/fragment/5/node = SubResource( 7 )
+nodes/fragment/5/position = Vector2( 0, 20 )
+nodes/fragment/6/node = SubResource( 8 )
+nodes/fragment/6/position = Vector2( 20, -140 )
+nodes/fragment/7/node = SubResource( 9 )
+nodes/fragment/7/position = Vector2( 194, -99 )
+nodes/fragment/connections = PoolIntArray( 3, 0, 2, 0, 4, 0, 2, 1, 2, 0, 5, 0, 6, 0, 7, 0, 5, 0, 7, 1, 7, 0, 0, 0, 5, 0, 0, 1 )
+
+[sub_resource type="ShaderMaterial" id=11]
+shader = SubResource( 10 )
+
+[sub_resource type="Curve" id=12]
+_data = [ Vector2( 0.509347, 0 ), 0.0, 4.53311, 0, 1, Vector2( 0.729946, 1 ), 0.0104366, 0.0104366, 0, 0, Vector2( 0.984196, 0 ), -3.93314, 0.0, 1, 0 ]
+
+[sub_resource type="CurveTexture" id=13]
+curve = SubResource( 12 )
+
+[sub_resource type="ParticlesMaterial" id=14]
+emission_shape = 2
+emission_box_extents = Vector3( 40, 50, 40 )
+gravity = Vector3( 0, -0.5, 0 )
+radial_accel = 1.0
+radial_accel_random = 1.0
+tangential_accel = 1.0
+tangential_accel_random = 1.0
+damping = 1.0
+damping_random = 0.2
+scale = 0.7
+scale_random = 0.1
+scale_curve = SubResource( 13 )
+
+[sub_resource type="SphereMesh" id=15]
+radius = 0.5
+height = 1.0
+
+[node name="particles" type="Particles"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20.5571, 0 )
+material_override = SubResource( 11 )
+cast_shadow = 0
+amount = 200
+lifetime = 10.0
+preprocess = 10.0
+process_material = SubResource( 14 )
+draw_pass_1 = SubResource( 15 )
+script = ExtResource( 1 )
