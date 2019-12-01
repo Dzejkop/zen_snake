@@ -261,5 +261,5 @@ stream = ExtResource( 7 )
 autoplay = true
 script = SubResource( 9 )
 [connection signal="on_death" from="snake" to="." method="_on_game_over"]
-[connection signal="on_eat_food" from="snake" to="env" method="glow_kick"]
 [connection signal="on_eat_food" from="snake" to="food_spawner" method="on_food_eaten"]
+[connection signal="on_eat_food" from="snake" to="env" method="glow_kick"]

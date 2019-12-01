@@ -118,14 +118,11 @@ func _ready():
 func _process(_delta):
     if _is_game_over && Input.is_action_just_pressed("restart_game"):
         get_tree().reload_current_scene()
+		
     if not has_game_started() && Input.is_action_just_pressed("start_game"):
         _game_in_progress = true
         $text_control.set_to_update_score()
         $env.glow_kick(10.0)
-        
-    if Input.is_action_just_pressed("ui_cancel"):
-        $food_spawner.disable()
-        emit_signal("on_quit")
 
     _out_box.get_surface_material(0).set_shader_param("snake_head_pos", _snake.head.translation)
     var max_dist = null

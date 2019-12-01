@@ -17,8 +17,10 @@ _global_script_class_icons={
 
 config/name="hyper_snake"
 run/main_scene="res://scenes/root.tscn"
-run/disable_stdout=true
-run/disable_stderr=true
+boot_splash/image="res://hypersnake_banner.png"
+boot_splash/bg_color=Color( 0, 0, 0, 1 )
+config/icon="res://icon.png"
+config/windows_native_icon="res://icon.ico"
 
 [debug]
 

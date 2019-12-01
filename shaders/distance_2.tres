@@ -66,13 +66,13 @@ expression = "float tmp = val / range;
 tmp = pow(tmp, highlight_cutoff);
 out = clamp(1.0 - tmp, 0, 1);"
 
-[sub_resource type="VisualShaderNodeScalarConstant" id=18]
+[sub_resource type="VisualShaderNodeScalarConstant" id=17]
 constant = 1.0
 
-[sub_resource type="VisualShaderNodeScalarConstant" id=19]
+[sub_resource type="VisualShaderNodeScalarConstant" id=18]
 constant = 0.4
 
-[sub_resource type="VisualShaderNodeScalarOp" id=34]
+[sub_resource type="VisualShaderNodeScalarOp" id=19]
 default_input_values = [ 0, 0.0, 1, 1.0 ]
 operator = 2
 
@@ -408,10 +408,10 @@ nodes/fragment/116/output_ports = "0,0,out;"
 nodes/fragment/116/expression = "float tmp = val / range;
 tmp = pow(tmp, highlight_cutoff);
 out = clamp(1.0 - tmp, 0, 1);"
-nodes/fragment/118/node = SubResource( 18 )
+nodes/fragment/118/node = SubResource( 17 )
 nodes/fragment/118/position = Vector2( 1200, -1060 )
-nodes/fragment/119/node = SubResource( 19 )
+nodes/fragment/119/node = SubResource( 18 )
 nodes/fragment/119/position = Vector2( 480, -780 )
-nodes/fragment/120/node = SubResource( 34 )
+nodes/fragment/120/node = SubResource( 19 )
 nodes/fragment/120/position = Vector2( 1000, -1220 )
 nodes/fragment/connections = PoolIntArray( 20, 0, 24, 1, 25, 0, 24, 0, 22, 0, 26, 1, 72, 0, 70, 1, 73, 0, 31, 0, 77, 0, 31, 1, 31, 0, 101, 0, 70, 0, 102, 0, 103, 0, 102, 1, 104, 0, 102, 2, 102, 0, 73, 0, 71, 0, 70, 0, 52, 0, 105, 0, 53, 0, 105, 1, 26, 0, 105, 2, 105, 0, 73, 1, 107, 0, 106, 0, 101, 0, 108, 1, 108, 0, 0, 1, 24, 0, 26, 0, 106, 0, 109, 0, 106, 0, 108, 0, 110, 0, 111, 0, 111, 0, 112, 0, 114, 0, 0, 0, 113, 0, 115, 1, 115, 0, 112, 1, 26, 0, 116, 2, 118, 0, 116, 1, 51, 0, 114, 0, 119, 0, 106, 1, 106, 0, 111, 1, 112, 0, 114, 1, 116, 0, 115, 0, 52, 0, 120, 0, 120, 0, 116, 0, 20, 0, 24, 1, 25, 0, 24, 0, 22, 0, 26, 1, 72, 0, 70, 1, 73, 0, 31, 0, 77, 0, 31, 1, 31, 0, 101, 0, 70, 0, 102, 0, 103, 0, 102, 1, 104, 0, 102, 2, 102, 0, 73, 0, 71, 0, 70, 0, 52, 0, 105, 0, 53, 0, 105, 1, 26, 0, 105, 2, 105, 0, 73, 1, 107, 0, 106, 0, 101, 0, 108, 1, 108, 0, 0, 1, 24, 0, 26, 0, 106, 0, 109, 0, 106, 0, 108, 0, 110, 0, 111, 0, 111, 0, 112, 0, 114, 0, 0, 0, 113, 0, 115, 1, 115, 0, 112, 1, 26, 0, 116, 2, 118, 0, 116, 1, 51, 0, 114, 0, 119, 0, 106, 1, 106, 0, 111, 1, 112, 0, 114, 1, 116, 0, 115, 0, 52, 0, 120, 0, 120, 0, 116, 0 )
