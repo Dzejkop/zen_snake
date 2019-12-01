@@ -1,6 +1,13 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://materials/food.tres" type="Material" id=2]
+
+[sub_resource type="GDScript" id=6]
+script/source = "extends Spatial
+
+func _ready():
+    $animation.play(\"appear\")
+"
 
 [sub_resource type="SphereMesh" id=1]
 radius = 0.7
@@ -11,16 +18,81 @@ top_radius = 0.7
 bottom_radius = 0.5
 height = 0.2
 
+[sub_resource type="SpatialMaterial" id=3]
+emission_enabled = true
+emission = Color( 1, 0.905882, 0.741176, 1 )
+emission_energy = 10.0
+emission_operator = 0
+emission_on_uv2 = false
+
+[sub_resource type="CylinderMesh" id=4]
+material = SubResource( 3 )
+top_radius = 0.05
+bottom_radius = 0.05
+height = 150.0
+
+[sub_resource type="Animation" id=5]
+resource_name = "appear"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("mesh:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ), Vector3( 1.2, 1.2, 1.2 ), Vector3( 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("base:scale")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.5, 1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ), Vector3( 0.8, 0.8, 0.8 ), Vector3( 1, 1, 1 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("light_spoke:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.3, 0.5, 1, 2 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ), Vector3( 0.1, 0, 0.1 ), Vector3( 0.5, 0.01, 0.5 ), Vector3( 0.5, 0.5, 0.5 ), Vector3( 1, 1, 1 ) ]
+}
+
 [node name="food" type="Spatial" groups=[
 "food",
 ]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6 )
+script = SubResource( 6 )
 
 [node name="mesh" type="MeshInstance" parent="."]
+transform = Transform( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 mesh = SubResource( 1 )
 material/0 = ExtResource( 2 )
 
-[node name="MeshInstance" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.968811, 0 )
+[node name="base" type="MeshInstance" parent="."]
+transform = Transform( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.968811, 0 )
 mesh = SubResource( 2 )
 material/0 = ExtResource( 2 )
+
+[node name="light_spoke" type="MeshInstance" parent="."]
+transform = Transform( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+cast_shadow = 0
+mesh = SubResource( 4 )
+material/0 = null
+
+[node name="animation" type="AnimationPlayer" parent="."]
+playback_speed = 2.0
+anims/appear = SubResource( 5 )

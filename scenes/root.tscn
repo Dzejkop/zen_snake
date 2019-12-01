@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://prefabs/snake.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scripts/world.gd" type="Script" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://scripts/camera_anchor.gd" type="Script" id=4]
 [ext_resource path="res://scripts/env.gd" type="Script" id=5]
 [ext_resource path="res://scripts/camera.gd" type="Script" id=6]
+[ext_resource path="res://sound/music/Star Commander1.wav" type="AudioStream" id=7]
 [ext_resource path="res://scripts/food_spawner.gd" type="Script" id=8]
 [ext_resource path="res://materials/distance_2.tres" type="Material" id=9]
 [ext_resource path="res://prefabs/particles.tscn" type="PackedScene" id=10]
@@ -48,9 +49,22 @@ emission_on_uv2 = false
 [sub_resource type="SpatialMaterial" id=6]
 resource_local_to_scene = true
 flags_transparent = true
-flags_unshaded = true
+emission_enabled = true
+emission = Color( 1, 1, 1, 1 )
+emission_energy = 1.0
+emission_operator = 0
+emission_on_uv2 = false
 
-[sub_resource type="GDScript" id=7]
+[sub_resource type="SpatialMaterial" id=7]
+resource_local_to_scene = true
+flags_transparent = true
+emission_enabled = true
+emission = Color( 1, 1, 1, 1 )
+emission_energy = 1.0
+emission_operator = 0
+emission_on_uv2 = false
+
+[sub_resource type="GDScript" id=8]
 script/source = "extends Node
 
 onready var top := $\"../labels/top\"
@@ -63,14 +77,18 @@ var _t = 0
 
 const SCORE_MODE := 1
 const TEXT_MODE := 2
+const GAME_OVER_MODE := 3
 
 var mode = TEXT_MODE
 
-var texts := [\"Any\", \"Arrow\", \"Start\", \"Game\"]
+var texts := [\"Press\", \"Space\", \"Start\", \"Game\"]
 onready var _text_nodes := [top, left, bottom, right]
+
+var _last_recorded_score := 0
 
 var _q := 0
 var _is_shifting := true
+var _is_showing_game_over = false
 
 func set_shift_text(new_texts):
     if len(new_texts) != 4:
@@ -82,14 +100,17 @@ func set_shift_text(new_texts):
 
 func set_to_update_score():
     mode = SCORE_MODE
+    
+func set_to_game_over():
+    mode = GAME_OVER_MODE
 
 func update_score():
     var snake := $\"../snake\"
     if snake:
-        var score = len(snake.tail)
+        _last_recorded_score = len(snake.tail)
     
-        right.set_text(\"Score: \" + str(score))
-        left.set_text(\"Score: \" + str(score))
+        right.set_text(\"Score: \" + str(_last_recorded_score))
+        left.set_text(\"Score: \" + str(_last_recorded_score))
         
         top.set_text(\"Hyper\")
         bottom.set_text(\"Snake\")
@@ -102,8 +123,23 @@ func _process(delta):
             _t = T
             if _is_shifting:
                 _shift_text()
-    else:
+    elif mode == SCORE_MODE:
         update_score()
+    else:
+        _t -= delta * T
+        if _t <= 0:
+            _t = T
+            if _is_showing_game_over:
+                right.set_text(\"Score: \" + str(_last_recorded_score))
+                left.set_text(\"Score: \" + str(_last_recorded_score))
+                top.set_text(\"Game\")
+                bottom.set_text(\"Press\")
+            else:
+                right.set_text(\"Score: \" + str(_last_recorded_score))
+                left.set_text(\"Score: \" + str(_last_recorded_score))
+                top.set_text(\"Over\")
+                bottom.set_text(\"Escape\")
+            _is_showing_game_over = not _is_showing_game_over
     
 func _shift_text():
     var l = len(texts)
@@ -115,12 +151,32 @@ func _shift_text():
     _q = _q % l
 "
 
+[sub_resource type="GDScript" id=9]
+script/source = "extends AudioStreamPlayer
+
+
+# Declare member variables here. Examples:
+# var a = 2
+# var b = \"text\"
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+    pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#    pass
+"
+
 [node name="world" type="Spatial"]
 script = ExtResource( 2 )
 bounds_bb = Vector3( 12, 22, 12 )
 
 [node name="dir_light" type="DirectionalLight" parent="."]
 transform = Transform( 0.707107, -0.190559, 0.680946, 0, 0.963003, 0.269491, -0.707107, -0.190559, 0.680946, 9.33, 1.975, 0 )
+visible = false
 light_energy = 0.46
 shadow_enabled = true
 
@@ -141,6 +197,7 @@ material/0 = ExtResource( 9 )
 
 [node name="food_spawner" type="Node" parent="."]
 script = ExtResource( 8 )
+max_food_count = 2
 
 [node name="tower" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.150961, -56.8683, 0.0684319 )
@@ -167,6 +224,8 @@ sway_range = 2.0
 lerp_speed = 0.01
 
 [node name="particles" parent="." instance=ExtResource( 10 )]
+amount = 500
+visibility_aabb = AABB( -25, -25, -25, 50, 50, 50 )
 
 [node name="labels" type="Spatial" parent="."]
 script = ExtResource( 13 )
@@ -182,16 +241,25 @@ material/0 = SubResource( 5 )
 [node name="score_displays" type="Spatial" parent="."]
 script = ExtResource( 11 )
 
-[node name="right" parent="score_displays" instance=ExtResource( 14 )]
-transform = Transform( -4.37114e-08, 0.707107, -0.707107, 0, 0.707107, 0.707107, 1, 3.09086e-08, -3.09086e-08, -15.872, 1, 0 )
+[node name="left" parent="score_displays" instance=ExtResource( 14 )]
+transform = Transform( -1.62921e-07, 0.707107, -0.707107, 0, 0.707107, 0.707107, 1, 1.15202e-07, -1.15202e-07, -15.872, 1, 0 )
 material/0 = SubResource( 6 )
 
-[node name="left" parent="score_displays" instance=ExtResource( 14 )]
+[node name="right" parent="score_displays" instance=ExtResource( 14 )]
 transform = Transform( -1.62921e-07, -0.707107, 0.707107, 0, 0.707107, 0.707107, -1, 1.15202e-07, -1.15202e-07, 15.872, 1, 0 )
-material/0 = SubResource( 6 )
+material/0 = SubResource( 7 )
 
 [node name="text_control" type="Node" parent="."]
-script = SubResource( 7 )
+script = SubResource( 8 )
+
+[node name="light" type="OmniLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0 )
+omni_range = 30.0
+
+[node name="music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 7 )
+autoplay = true
+script = SubResource( 9 )
 [connection signal="on_death" from="snake" to="." method="_on_game_over"]
 [connection signal="on_eat_food" from="snake" to="env" method="glow_kick"]
 [connection signal="on_eat_food" from="snake" to="food_spawner" method="on_food_eaten"]

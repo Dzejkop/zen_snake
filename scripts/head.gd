@@ -5,4 +5,3 @@ func _ready():
 
 func _on_death():
     $animation.play("death")
-

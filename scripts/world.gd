@@ -15,6 +15,7 @@ signal on_quit()
 var wall_elements: Array
 
 var _game_in_progress := false
+var _is_game_over := false
 
 func has_game_started() -> bool:
     return _game_in_progress
@@ -110,10 +111,14 @@ static func is_at_inflection(aa: Vector3, bb: Vector3, point: Vector3) -> bool:
     return touching_how_many_walls(aa, bb, point) >= 2
 
 func _ready():
+    randomize()
     wall_elements = get_tree().get_nodes_in_group('wall')
+    $out_box.get_surface_material(0).set_shader_param("range", 20)
 
 func _process(_delta):
-    if not has_game_started() && (Input.is_action_just_pressed("ui_left") || Input.is_action_just_pressed("ui_right")):
+    if _is_game_over && Input.is_action_just_pressed("restart_game"):
+        get_tree().reload_current_scene()
+    if not has_game_started() && Input.is_action_just_pressed("start_game"):
         _game_in_progress = true
         $text_control.set_to_update_score()
         $env.glow_kick(10.0)
@@ -137,10 +142,10 @@ func _process(_delta):
 
 
 func _on_game_over():
-    if $snake_pos_indicators:
-        $snake_pos_indicators.visible = false
+    print('_on_game_over')
     $particles.speed_scale = 0
     $out_box.get_surface_material(0).set_shader_param("range", 0)
     $food_spawner.disable()
-    $text_control.set_shift_text(["Press", "Escape", "To", "Restart"])
+    $text_control.set_to_game_over()
     $env.glow_kick(100)
+    _is_game_over = true

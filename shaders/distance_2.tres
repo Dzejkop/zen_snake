@@ -1,4 +1,4 @@
-[gd_resource type="VisualShader" load_steps=20 format=2]
+[gd_resource type="VisualShader" load_steps=34 format=2]
 
 [sub_resource type="VisualShaderNodeScalarClamp" id=1]
 
@@ -18,44 +18,102 @@ expression = "float tmp = val / range;
 tmp = pow(tmp, highlight_cutoff);
 out = clamp(1.0 - tmp, 0, 1);"
 
-[sub_resource type="VisualShaderNodeInput" id=6]
+[sub_resource type="VisualShaderNodeExpression" id=6]
+expression = "vec3 uv = (CAMERA_MATRIX * vec4(VERTEX, 1.0)).xyz;
+uv *= n;
+vec3 abs_diff = abs(uv - round(uv));
+abs_diff -= q;
+abs_diff /= q;
+abs_diff = clamp(abs_diff, 0, 1);
+
+if (abs_diff.z == 0.0) {
+	_out = abs_diff.x * abs_diff.y;
+} else if (abs_diff.y == 0.0) {
+ 	_out = abs_diff.x * abs_diff.z;
+} else {
+ 	_out = abs_diff.y * abs_diff.z;
+}"
+
+[sub_resource type="VisualShaderNodeScalarConstant" id=7]
+constant = 0.5
+
+[sub_resource type="VisualShaderNodeScalarOp" id=8]
+operator = 2
+
+[sub_resource type="VisualShaderNodeScalarFunc" id=9]
+function = 31
+
+[sub_resource type="VisualShaderNodeColorConstant" id=10]
+constant = Color( 0, 0.958984, 1, 1 )
+
+[sub_resource type="VisualShaderNodeVectorOp" id=11]
+operator = 2
+
+[sub_resource type="VisualShaderNodeVectorOp" id=12]
+operator = 2
+
+[sub_resource type="VisualShaderNodeScalarConstant" id=13]
+constant = 5000.0
+
+[sub_resource type="VisualShaderNodeVectorOp" id=14]
+
+[sub_resource type="VisualShaderNodeScalarOp" id=15]
+default_input_values = [ 0, 1.0, 1, 0.0 ]
+operator = 2
+
+[sub_resource type="VisualShaderNodeExpression" id=16]
+expression = "float tmp = val / range;
+tmp = pow(tmp, highlight_cutoff);
+out = clamp(1.0 - tmp, 0, 1);"
+
+[sub_resource type="VisualShaderNodeScalarConstant" id=18]
+constant = 1.0
+
+[sub_resource type="VisualShaderNodeScalarConstant" id=19]
+constant = 0.4
+
+[sub_resource type="VisualShaderNodeScalarOp" id=34]
+default_input_values = [ 0, 0.0, 1, 1.0 ]
+operator = 2
+
+[sub_resource type="VisualShaderNodeInput" id=20]
 input_name = "vertex"
 
-[sub_resource type="VisualShaderNodeVec3Uniform" id=7]
+[sub_resource type="VisualShaderNodeVec3Uniform" id=21]
 uniform_name = "snake_head_pos"
 
-[sub_resource type="VisualShaderNodeTransformVecMult" id=8]
+[sub_resource type="VisualShaderNodeTransformVecMult" id=22]
 
-[sub_resource type="VisualShaderNodeInput" id=9]
+[sub_resource type="VisualShaderNodeInput" id=23]
 input_name = "camera"
 
-[sub_resource type="VisualShaderNodeVectorDistance" id=10]
+[sub_resource type="VisualShaderNodeVectorDistance" id=24]
 
-[sub_resource type="VisualShaderNodeScalarOp" id=11]
+[sub_resource type="VisualShaderNodeScalarOp" id=25]
 default_input_values = [ 0, 0.0, 1, 0.4 ]
 operator = 2
 
-[sub_resource type="VisualShaderNodeColorUniform" id=12]
+[sub_resource type="VisualShaderNodeColorUniform" id=26]
 uniform_name = "highlight_color"
 
-[sub_resource type="VisualShaderNodeScalarUniform" id=13]
+[sub_resource type="VisualShaderNodeScalarUniform" id=27]
 uniform_name = "range"
 
-[sub_resource type="VisualShaderNodeScalarUniform" id=14]
+[sub_resource type="VisualShaderNodeScalarUniform" id=28]
 uniform_name = "highlight_cutoff"
 
-[sub_resource type="VisualShaderNodeFresnel" id=15]
+[sub_resource type="VisualShaderNodeFresnel" id=29]
 default_input_values = [ 0, Vector3( 0, 0, 0 ), 1, Vector3( 0, 0, 0 ), 2, false, 3, 5.0 ]
 
-[sub_resource type="VisualShaderNodeInput" id=16]
+[sub_resource type="VisualShaderNodeInput" id=30]
 input_name = "normal"
 
-[sub_resource type="VisualShaderNodeInput" id=17]
+[sub_resource type="VisualShaderNodeInput" id=31]
 input_name = "view"
 
-[sub_resource type="VisualShaderNodeScalarOp" id=18]
+[sub_resource type="VisualShaderNodeScalarOp" id=32]
 
-[sub_resource type="VisualShaderNodeScalarUniform" id=19]
+[sub_resource type="VisualShaderNodeScalarUniform" id=33]
 uniform_name = "opacity"
 
 [resource]
@@ -64,8 +122,8 @@ render_mode cull_disabled, unshaded, world_vertex_coords;
 
 uniform vec4 highlight_color : hint_color;
 uniform float range;
-uniform float highlight_cutoff;
 uniform vec3 snake_head_pos;
+uniform float highlight_cutoff;
 uniform float opacity;
 
 
@@ -81,6 +139,100 @@ void fragment() {
 	float n_out51p1;
 	n_out51p0 = highlight_color.rgb;
 	n_out51p1 = highlight_color.a;
+
+// Color:110
+	vec3 n_out110p0;
+	float n_out110p1;
+	n_out110p0 = vec3(0.000000,0.958984,1.000000);
+	n_out110p1 = 1.000000;
+
+// Scalar:107
+	float n_out107p0;
+	n_out107p0 = 0.500000;
+
+// Scalar:119
+	float n_out119p0;
+	n_out119p0 = 0.400000;
+
+// Expression:106
+	float n_out106p0;
+	n_out106p0=0.0;
+	{
+		vec3 uv = (CAMERA_MATRIX * vec4(VERTEX, 1.0)).xyz;
+		uv *= n_out107p0;
+		vec3 abs_diff = abs(uv - round(uv));
+		abs_diff -= n_out119p0;
+		abs_diff /= n_out119p0;
+		abs_diff = clamp(abs_diff, 0, 1);
+		
+		if (abs_diff.z == 0.0) {
+			n_out106p0 = abs_diff.x * abs_diff.y;
+		} else if (abs_diff.y == 0.0) {
+		 	n_out106p0 = abs_diff.x * abs_diff.z;
+		} else {
+		 	n_out106p0 = abs_diff.y * abs_diff.z;
+		}
+	}
+// VectorOp:111
+	vec3 n_out111p0;
+	n_out111p0 = n_out110p0 * vec3(n_out106p0);
+
+// ScalarUniform:52
+	float n_out52p0;
+	n_out52p0 = range;
+
+// ScalarOp:120
+	float n_in120p1 = 1.00000;
+	float n_out120p0;
+	n_out120p0 = n_out52p0 * n_in120p1;
+
+// Scalar:118
+	float n_out118p0;
+	n_out118p0 = 1.000000;
+
+// Input:25
+	mat4 n_out25p0;
+	n_out25p0 = CAMERA_MATRIX;
+
+// Input:20
+	vec3 n_out20p0;
+	n_out20p0 = VERTEX;
+
+// TransformVectorMult:24
+	vec3 n_out24p0;
+	n_out24p0 = ( n_out25p0 * vec4(n_out20p0, 1.0) ).xyz;
+
+// VectorUniform:22
+	vec3 n_out22p0;
+	n_out22p0 = snake_head_pos;
+
+// Distance:26
+	float n_out26p0;
+	n_out26p0 = distance( n_out24p0 , n_out22p0 );
+
+// Expression:116
+	float n_out116p0;
+	n_out116p0=0.0;
+	{
+		float tmp = n_out26p0 / n_out120p0;
+		tmp = pow(tmp, n_out118p0);
+		n_out116p0 = clamp(1.0 - tmp, 0, 1);
+	}
+// Scalar:113
+	float n_out113p0;
+	n_out113p0 = 5000.000000;
+
+// ScalarOp:115
+	float n_out115p0;
+	n_out115p0 = n_out116p0 * n_out113p0;
+
+// VectorOp:112
+	vec3 n_out112p0;
+	n_out112p0 = n_out111p0 * vec3(n_out115p0);
+
+// VectorOp:114
+	vec3 n_out114p0;
+	n_out114p0 = n_out51p0 + n_out112p0;
 
 // Input:71
 	vec3 n_out71p0;
@@ -111,33 +263,9 @@ void fragment() {
 		tmp = pow(tmp, n_out104p0);
 		n_out102p0 = clamp(tmp, 0, 1);
 	}
-// ScalarUniform:52
-	float n_out52p0;
-	n_out52p0 = range;
-
 // ScalarUniform:53
 	float n_out53p0;
 	n_out53p0 = highlight_cutoff;
-
-// Input:25
-	mat4 n_out25p0;
-	n_out25p0 = CAMERA_MATRIX;
-
-// Input:20
-	vec3 n_out20p0;
-	n_out20p0 = VERTEX;
-
-// TransformVectorMult:24
-	vec3 n_out24p0;
-	n_out24p0 = ( n_out25p0 * vec4(n_out20p0, 1.0) ).xyz;
-
-// VectorUniform:22
-	vec3 n_out22p0;
-	n_out22p0 = snake_head_pos;
-
-// Distance:26
-	float n_out26p0;
-	n_out26p0 = distance( n_out24p0 , n_out22p0 );
 
 // Expression:105
 	float n_out105p0;
@@ -165,10 +293,13 @@ void fragment() {
 	float n_out101p0;
 	n_out101p0 = clamp( n_out31p0, n_in101p1, n_in101p2 );
 
+// ScalarOp:108
+	float n_out108p0;
+	n_out108p0 = n_out106p0 * n_out101p0;
+
 // Output:0
-	ALBEDO = n_out51p0;
-	ALPHA = n_out101p0;
-	EMISSION = n_out51p0;
+	ALBEDO = n_out114p0;
+	ALPHA = n_out108p0;
 
 }
 
@@ -177,38 +308,38 @@ void light() {
 
 }
 "
-graph_offset = Vector2( 45.2239, -693 )
+graph_offset = Vector2( 1697, -801 )
 modes/cull = 2
 flags/unshaded = true
 flags/world_vertex_coords = true
-nodes/fragment/0/position = Vector2( 2320, -580 )
-nodes/fragment/20/node = SubResource( 6 )
-nodes/fragment/20/position = Vector2( -80, -180 )
-nodes/fragment/22/node = SubResource( 7 )
+nodes/fragment/0/position = Vector2( 2760, -740 )
+nodes/fragment/20/node = SubResource( 20 )
+nodes/fragment/20/position = Vector2( -400, -200 )
+nodes/fragment/22/node = SubResource( 21 )
 nodes/fragment/22/position = Vector2( 160, -140 )
-nodes/fragment/24/node = SubResource( 8 )
-nodes/fragment/24/position = Vector2( 140, -280 )
-nodes/fragment/25/node = SubResource( 9 )
-nodes/fragment/25/position = Vector2( -80, -260 )
-nodes/fragment/26/node = SubResource( 10 )
+nodes/fragment/24/node = SubResource( 22 )
+nodes/fragment/24/position = Vector2( -180, -300 )
+nodes/fragment/25/node = SubResource( 23 )
+nodes/fragment/25/position = Vector2( -400, -280 )
+nodes/fragment/26/node = SubResource( 24 )
 nodes/fragment/26/position = Vector2( 420, -160 )
-nodes/fragment/31/node = SubResource( 11 )
+nodes/fragment/31/node = SubResource( 25 )
 nodes/fragment/31/position = Vector2( 1500, -460 )
-nodes/fragment/51/node = SubResource( 12 )
-nodes/fragment/51/position = Vector2( 1700, -580 )
-nodes/fragment/52/node = SubResource( 13 )
+nodes/fragment/51/node = SubResource( 26 )
+nodes/fragment/51/position = Vector2( 2040, -620 )
+nodes/fragment/52/node = SubResource( 27 )
 nodes/fragment/52/position = Vector2( 420, -280 )
-nodes/fragment/53/node = SubResource( 14 )
+nodes/fragment/53/node = SubResource( 28 )
 nodes/fragment/53/position = Vector2( 420, -220 )
-nodes/fragment/70/node = SubResource( 15 )
+nodes/fragment/70/node = SubResource( 29 )
 nodes/fragment/70/position = Vector2( 420, -580 )
-nodes/fragment/71/node = SubResource( 16 )
+nodes/fragment/71/node = SubResource( 30 )
 nodes/fragment/71/position = Vector2( 200, -580 )
-nodes/fragment/72/node = SubResource( 17 )
+nodes/fragment/72/node = SubResource( 31 )
 nodes/fragment/72/position = Vector2( 200, -500 )
-nodes/fragment/73/node = SubResource( 18 )
+nodes/fragment/73/node = SubResource( 32 )
 nodes/fragment/73/position = Vector2( 1320, -460 )
-nodes/fragment/77/node = SubResource( 19 )
+nodes/fragment/77/node = SubResource( 33 )
 nodes/fragment/77/position = Vector2( 1320, -340 )
 nodes/fragment/101/node = SubResource( 1 )
 nodes/fragment/101/position = Vector2( 1700, -460 )
@@ -225,11 +356,62 @@ nodes/fragment/103/position = Vector2( 420, -440 )
 nodes/fragment/104/node = SubResource( 4 )
 nodes/fragment/104/position = Vector2( 420, -360 )
 nodes/fragment/105/node = SubResource( 5 )
-nodes/fragment/105/position = Vector2( 640, -280 )
+nodes/fragment/105/position = Vector2( 640, -300 )
 nodes/fragment/105/size = Vector2( 559, 264 )
 nodes/fragment/105/input_ports = "0,0,range;1,0,highlight_cutoff;2,0,val;"
 nodes/fragment/105/output_ports = "0,0,out;"
 nodes/fragment/105/expression = "float tmp = val / range;
 tmp = pow(tmp, highlight_cutoff);
 out = clamp(1.0 - tmp, 0, 1);"
-nodes/fragment/connections = PoolIntArray( 20, 0, 24, 1, 25, 0, 24, 0, 24, 0, 26, 0, 22, 0, 26, 1, 72, 0, 70, 1, 73, 0, 31, 0, 77, 0, 31, 1, 31, 0, 101, 0, 101, 0, 0, 1, 70, 0, 102, 0, 103, 0, 102, 1, 104, 0, 102, 2, 102, 0, 73, 0, 71, 0, 70, 0, 52, 0, 105, 0, 53, 0, 105, 1, 26, 0, 105, 2, 105, 0, 73, 1, 51, 0, 0, 0, 51, 0, 0, 5 )
+nodes/fragment/106/node = SubResource( 6 )
+nodes/fragment/106/position = Vector2( 780, -960 )
+nodes/fragment/106/size = Vector2( 678, 371 )
+nodes/fragment/106/input_ports = "0,0,n;1,0,q;"
+nodes/fragment/106/output_ports = "0,0,_out;"
+nodes/fragment/106/expression = "vec3 uv = (CAMERA_MATRIX * vec4(VERTEX, 1.0)).xyz;
+uv *= n;
+vec3 abs_diff = abs(uv - round(uv));
+abs_diff -= q;
+abs_diff /= q;
+abs_diff = clamp(abs_diff, 0, 1);
+
+if (abs_diff.z == 0.0) {
+	_out = abs_diff.x * abs_diff.y;
+} else if (abs_diff.y == 0.0) {
+ 	_out = abs_diff.x * abs_diff.z;
+} else {
+ 	_out = abs_diff.y * abs_diff.z;
+}"
+nodes/fragment/107/node = SubResource( 7 )
+nodes/fragment/107/position = Vector2( 440, -860 )
+nodes/fragment/108/node = SubResource( 8 )
+nodes/fragment/108/position = Vector2( 2040, -500 )
+nodes/fragment/109/node = SubResource( 9 )
+nodes/fragment/109/position = Vector2( 1679, -793.25 )
+nodes/fragment/110/node = SubResource( 10 )
+nodes/fragment/110/position = Vector2( 1620, -940 )
+nodes/fragment/111/node = SubResource( 11 )
+nodes/fragment/111/position = Vector2( 1860, -920 )
+nodes/fragment/112/node = SubResource( 12 )
+nodes/fragment/112/position = Vector2( 2400, -880 )
+nodes/fragment/113/node = SubResource( 13 )
+nodes/fragment/113/position = Vector2( 1920, -720 )
+nodes/fragment/114/node = SubResource( 14 )
+nodes/fragment/114/position = Vector2( 2267, -606.25 )
+nodes/fragment/115/node = SubResource( 15 )
+nodes/fragment/115/position = Vector2( 2200, -1160 )
+nodes/fragment/116/node = SubResource( 16 )
+nodes/fragment/116/position = Vector2( 1460, -1220 )
+nodes/fragment/116/size = Vector2( 559, 264 )
+nodes/fragment/116/input_ports = "0,0,range;1,0,highlight_cutoff;2,0,val;"
+nodes/fragment/116/output_ports = "0,0,out;"
+nodes/fragment/116/expression = "float tmp = val / range;
+tmp = pow(tmp, highlight_cutoff);
+out = clamp(1.0 - tmp, 0, 1);"
+nodes/fragment/118/node = SubResource( 18 )
+nodes/fragment/118/position = Vector2( 1200, -1060 )
+nodes/fragment/119/node = SubResource( 19 )
+nodes/fragment/119/position = Vector2( 480, -780 )
+nodes/fragment/120/node = SubResource( 34 )
+nodes/fragment/120/position = Vector2( 1000, -1220 )
+nodes/fragment/connections = PoolIntArray( 20, 0, 24, 1, 25, 0, 24, 0, 22, 0, 26, 1, 72, 0, 70, 1, 73, 0, 31, 0, 77, 0, 31, 1, 31, 0, 101, 0, 70, 0, 102, 0, 103, 0, 102, 1, 104, 0, 102, 2, 102, 0, 73, 0, 71, 0, 70, 0, 52, 0, 105, 0, 53, 0, 105, 1, 26, 0, 105, 2, 105, 0, 73, 1, 107, 0, 106, 0, 101, 0, 108, 1, 108, 0, 0, 1, 24, 0, 26, 0, 106, 0, 109, 0, 106, 0, 108, 0, 110, 0, 111, 0, 111, 0, 112, 0, 114, 0, 0, 0, 113, 0, 115, 1, 115, 0, 112, 1, 26, 0, 116, 2, 118, 0, 116, 1, 51, 0, 114, 0, 119, 0, 106, 1, 106, 0, 111, 1, 112, 0, 114, 1, 116, 0, 115, 0, 52, 0, 120, 0, 120, 0, 116, 0 )

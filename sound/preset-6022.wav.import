@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/preset-6022.wav-1bdf6c27781cd897a5c611a86844d61a.sample"
+
+[deps]
+
+source_file="res://sound/preset-6022.wav"
+dest_files=[ "res://.import/preset-6022.wav-1bdf6c27781cd897a5c611a86844d61a.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

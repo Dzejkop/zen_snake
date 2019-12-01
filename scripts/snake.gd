@@ -52,9 +52,11 @@ func _process(delta) -> void:
         return
         
     if not is_in_air and Input.is_action_just_pressed('ui_left'):
+        $sounds.turn()
         direction = direction.cross(-current_up)
 
     if not is_in_air and Input.is_action_just_pressed('ui_right'):
+        $sounds.turn()
         direction = direction.cross(current_up)
 
     if not is_in_air and Input.is_action_just_pressed("ui_accept"):
@@ -76,16 +78,19 @@ func jump():
     var tmp = direction
     direction = current_up
     current_up = -tmp
+    $sounds.jump()
 
 func eat(food_node: Spatial):
     get_tree().queue_delete(food_node)
     emit_signal("on_eat_food", food_node)
+    $sounds.eat()
     grow()
     
 func die():
     emit_signal("on_death")
     is_alive = false
     $indicator.visible = false
+    $sounds.die()
     
     head.die()
     for segment in tail:
